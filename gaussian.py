@@ -129,7 +129,7 @@ def back_substitution(matrix, b):
     n = len(matrix)
     x = [0]*n
 
-    x[n-1] = b[n-1] / matrix[n-1][n-1]
+    # x[n-1] = b[n-1] / matrix[n-1][n-1]
 
     for i in range(n-1, -1, -1):
         s = b[i]
@@ -157,29 +157,43 @@ def spp_forward_elimination(matrix, b):
     n = len(matrix)
     #scaling factors
     s = [max(abs(val) for val in row) for row in matrix]
-    index = list(range(n))
+    # index = list(range(n))
 
     for k in range(n-1):
         #find pivot row
-        max_ratio = 0
+        max_ratio = -1.0
         pivot = k
 
         for i in range(k, n):
-            ratio = abs(matrix[i][k]) / s[index[i]]
+            #ratio = abs(matrix[index[i]][k]) / s[index[i]]
+            # if ratio > max_ratio:
+            #     max_ratio = ratio
+            #     pivot = i
+            ratio = 0.0 if s[i] == 0 else abs(matrix[i][k] / s[i])
             if ratio > max_ratio:
                 max_ratio = ratio
                 pivot = i
+
         
         #swap rows
-        index[k], index[pivot] = index[pivot], index[k]
-        
-        #eliminate below the pivot
-        for i in range(k+1, n):
-            mult = matrix[index[i]][k] / matrix[index[k]][k]
-            for j in range(k, n):
-                matrix[index[i]][j] -= mult * matrix[index[k]][j]
-            b[index[i]] -= matrix * b[index[k]]
+        #index[k], index[pivot] = index[pivot], index[k]
+        if pivot != k:
+            matrix[k], matrix[pivot] = matrix[pivot], matrix[k]
+            b[k], b[pivot] = b[pivot], b[k]
+            s[k], s[pivot] = s[pivot], s[k]
 
+        #eliminate below the pivot
+        # for i in range(k+1, n):
+        #     mult = matrix[index[i]][k] / matrix[index[k]][k]
+        #     for j in range(k, n):
+        #         matrix[index[i]][j] -= mult * matrix[index[k]][j]
+        #     b[index[i]] -= mult * b[index[k]]
+        for i in range(k+1, n):
+            mult = matrix[i][k] / matrix[k][k]
+            for j in range(k, n):
+                matrix[i][j] -= mult * matrix[k][j]
+            b[i] -= mult * b[k]
+            matrix[i][k] = 0.0
 
 def naive_gaussian(matrix, b):
     naive_forward_elimination(matrix, b)
