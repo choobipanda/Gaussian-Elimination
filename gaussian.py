@@ -1,5 +1,7 @@
 import sys
 import numpy as np
+import time
+import copy
 '''
 The program should take as input a file which contains data for a linear system in the following format:
 
@@ -214,8 +216,20 @@ def gaussian():
     datatype = get_datatype(precision)
 
     matrix, b = read_linear_system(filename, datatype)
-    
+
     x = naive_gaussian(matrix, b) if method == "naive" else spp(matrix, b)
+
+    # for comparing runtimes 
+    # runs = 1000
+    # x = None
+    # start = time.perf_counter()
+    # for _ in range (runs):
+    #     if method == "naive":
+    #         x = naive_gaussian(copy.deepcopy(matrix), copy.deepcopy(b))
+    #     else:
+    #         x = spp(copy.deepcopy(matrix), copy.deepcopy(b))
+    # end = time.perf_counter()
+    # print("avg runtime:", (end-start)/runs)
 
     write_solution(filename, x)
 
